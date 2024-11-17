@@ -4,47 +4,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Subzero - Measuring the Internet undersea cables</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
 </head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">SubZero</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Traceroutes</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Cables</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">About</a>
-                </li>
-            </ul>
+<body class="bg-gray-100">
+    <nav class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center">
+                    <img src="subzero_logo.png" alt="Logo" class="h-8 w-8 mr-2">
+                    <span class="text-xl font-bold text-gray-800">Subzero</span>
+                </div>
+                <div class="hidden md:flex space-x-4">
+                    <a href="#" class="text-gray-800 hover:text-blue-500">Traceroutes</a>
+                    <a href="#" class="text-gray-800 hover:text-blue-500">Cables</a>
+                    <a href="#" class="text-gray-800 hover:text-blue-500">About</a>
+                </div>
+            </div>
         </div>
     </nav>
 
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <h3 class="text-center mb-4">RIPE Atlas Traceroutes crossing undersea cables</h3>
-                <table id="csvTable" class="table table-striped table-bordered" style="width:100%">
-                    <thead>
-                        <tr>
-                            <th>Column 1</th>
-                            <th>Column 2</th>
-                            <th>Column 3</th>
-                            <th>Column 4</th>
-                            <th>Column 5</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
+    <div class="container mx-auto mt-10">
+        <div class="flex justify-center">
+            <div class="w-full md:w-3/4 lg:w-2/3">
+                <h3 class="text-center text-2xl font-bold mb-6">RIPE Atlas Traceroutes crossing undersea cables</h3>
+                <div class="overflow-x-auto">
+                    <table id="csvTable" class="min-w-full bg-white shadow-md rounded-lg">
+                        <thead>
+                            <tr class="bg-blue-500 text-white">
+                                <th class="py-3 px-4 text-left">IP link</th>
+                                <th class="py-3 px-4 text-left">Average RTT</th>
+                                <th class="py-3 px-4 text-left">Measurement IDs</th>
+                                <th class="py-3 px-4 text-left">Countries</th>
+                                <th class="py-3 px-4 text-left">Submarine Cables</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -55,21 +53,27 @@
     <script>
         $(document).ready(function () {
             // Load CSV file
-            Papa.parse('data.csv', {
+            Papa.parse('https://raw.githubusercontent.com/deeplink-subzero/subzero-webpage/refs/heads/main/data.csv', { 
                 download: true,
                 header: true,
+                delimiter: ",",
                 complete: function (results) {
                     let data = results.data;
                     let tableBody = '';
-
+                    let header_row = 1;
+                    
                     data.forEach(function (row) {
-                        tableBody += '<tr>';
-                        tableBody += `<td>${row['Column 1']}</td>`;
-                        tableBody += `<td>${row['Column 2']}</td>`;
-                        tableBody += `<td>${row['Column 3']}</td>`;
-                        tableBody += `<td>${row['Column 4']}</td>`;
-                        tableBody += `<td>${row['Column 5']}</td>`;
-                        tableBody += '</tr>';
+                        
+                        if (row['link'] != undefined){
+                            tableBody += `<tr class="border-b">`;
+                            tableBody += `<td class="py-3 px-4">${row['link']}</td>`;
+                            tableBody += `<td class="py-3 px-4">${row['rtt']}</td>`;
+                            tableBody += `<td class="py-3 px-4">${row['msms']}</td>`;
+                            tableBody += `<td class="py-3 px-4">${row['countries']}</td>`;
+                            tableBody += `<td class="py-3 px-4">${row['cables']}</td>`;
+                            tableBody += `</tr>`;
+                        }
+                        
                     });
 
                     $('#csvTable tbody').html(tableBody);
@@ -84,7 +88,5 @@
             });
         });
     </script>
-
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
